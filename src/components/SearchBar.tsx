@@ -23,7 +23,6 @@ export default function SearchBar({
   colorClass = "default",
 }: SearchBarProps) {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -35,16 +34,9 @@ export default function SearchBar({
       ? "focus:ring-teal-400 focus:border-teal-400"
       : "focus:ring-slate-400 focus:border-slate-400";
 
-  useEffect(() => {
-    if (query.trim().length > 0) {
-      const res = searchLessons(query, subjectId);
-      setResults(res);
-      setIsOpen(true);
-    } else {
-      setResults([]);
-      setIsOpen(false);
-    }
-  }, [query, subjectId]);
+  // نتيجة البحث مشتقّة من النص مباشرة (بلا حالة ولا effect):
+  // أبسط، وأسرع، ولا يمكن أن تتناقض مع الحقل.
+  const results: SearchResult[] = query.trim().length > 0 ? searchLessons(query, subjectId) : [];
 
   // Close on outside click
   useEffect(() => {
@@ -74,8 +66,12 @@ export default function SearchBar({
         <input
           ref={inputRef}
           type="search"
+          role="combobox"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setIsOpen(e.target.value.trim().length > 0);
+          }}
           placeholder={placeholder}
           className={`
             w-full pr-10 pl-4 py-3 rounded-xl border border-slate-200 bg-white
@@ -86,6 +82,7 @@ export default function SearchBar({
           aria-label={placeholder}
           aria-autocomplete="list"
           aria-expanded={isOpen}
+          aria-controls="lesson-search-results"
           aria-haspopup="listbox"
         />
         {query && (
@@ -104,6 +101,7 @@ export default function SearchBar({
       {/* Dropdown Results */}
       {isOpen && (
         <div
+          id="lesson-search-results"
           className="absolute top-full right-0 left-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden animate-fade-in"
           role="listbox"
           aria-label="نتائج البحث"

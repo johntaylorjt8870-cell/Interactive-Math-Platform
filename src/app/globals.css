@@ -30,6 +30,13 @@
   --status-available: #10b981;
   --status-coming: #f59e0b;
   --status-completed: #6366f1;
+
+  /* Math typography — خط رياضي حقيقي (Serif مع بديل رياضي عند توفره) */
+  --font-math: "Latin Modern Math", "STIX Two Math", "Cambria Math", Cambria,
+    "Times New Roman", serif;
+  /* لون الإبراز الافتراضي داخل الدرس (يُبدَّل حسب المادة) */
+  --accent: var(--algebra-primary);
+  --accent-soft: var(--algebra-light);
 }
 
 * {
@@ -50,13 +57,181 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Math expressions — always LTR */
-.math, .math-expr, [data-math], .fraction, .equation, .formula {
+/* ============================================================
+   عزل الاتجاه — Direction isolation
+   العربية RTL، وكل وحدة لاتينية/رياضية معزولة LTR.
+   `isolate` أقوى من `embed`: يمنع تأثر الأرقام والرموز المجاورة
+   بسياق RTL ويمنع انعكاس ترتيب التعبيرات.
+   ============================================================ */
+[dir="ltr"],
+.ltr-run {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* التعبيرات الرياضية — LTR دائمًا ومعزولة دائمًا */
+.math,
+.math-expr,
+[data-math],
+.fraction,
+.equation,
+.formula {
   direction: ltr !important;
-  text-align: left !important;
-  unicode-bidi: embed;
+  unicode-bidi: isolate !important;
+}
+
+.math-expr {
+  display: inline-block;
+  font-family: var(--font-math);
+  text-align: left;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+/* معادلة/صيغة كاملة: وسط السطر، وقابلة للتمرير أفقيًا إن طالت */
+.math-block-outer {
+  display: block;
+  overflow-x: auto;
+  overflow-y: hidden;
+  text-align: center;
+  padding: 0.35rem 0;
+  max-width: 100%;
+}
+.math-block {
   display: inline-block;
 }
+
+/* داخل SVG: لا نلفّ ولا نعزل الوراثة */
+svg .math-expr {
+  white-space: pre;
+}
+
+/* أعداد قائمة ومتغيرات مائلة — الاصطلاح الرياضي الصحيح */
+.m-num { font-style: normal; }
+.m-var { font-style: italic; }
+.m-greek { font-style: italic; }
+.m-text { font-style: normal; }
+.m-op { margin: 0 0.18em; }
+.m-op-tight { margin: 0 0.12em; }
+.m-fn { font-style: normal; }
+.m-fn-spaced { margin: 0 0.2em; }
+.m-paren { margin: 0 0.02em; }
+.m-group { white-space: nowrap; }
+.m-sup, .m-sub { font-size: 0.72em; }
+.m-script-base { white-space: nowrap; }
+.m-text-ar {
+  font-family: "Cairo", "Tajawal", system-ui, sans-serif;
+  margin: 0 0.15em;
+  font-style: normal;
+}
+/* رمز غير معروف: يظهر واضحًا ليرصده التدقيق */
+.m-unknown {
+  color: #dc2626;
+  background: #fef2f2;
+  border-radius: 3px;
+  padding: 0 0.1em;
+}
+
+/* ============================================================
+   الكسر المكدّس — True stacked fraction
+   البسط فوق المقام وخط كسري بينهما يمتد بعرض الأوسع.
+   ============================================================ */
+.m-frac {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  margin: 0 0.14em;
+  font-size: 0.95em;
+  line-height: 1.1;
+}
+.m-frac-num {
+  display: block;
+  padding: 0 0.28em 0.08em;
+  text-align: center;
+}
+.m-frac-bar {
+  display: block;
+  align-self: stretch;
+  height: 0.07em;
+  min-width: 100%;
+  background: currentColor;
+  margin: 0.04em 0;
+}
+.m-frac-den {
+  display: block;
+  padding: 0.08em 0.28em 0;
+  text-align: center;
+}
+
+/* الجذر التربيعي */
+.m-sqrt { display: inline-flex; align-items: flex-start; white-space: nowrap; }
+.m-sqrt-sign { margin-right: 0.02em; }
+.m-sqrt-index { font-size: 0.62em; vertical-align: super; margin-right: -0.35em; }
+.m-sqrt-body {
+  border-top: 1px solid currentColor;
+  padding: 0.12em 0.18em 0;
+}
+
+/* الخط فوق الرموز */
+.m-overline { text-decoration: overline; }
+.m-vec { text-decoration: overline; text-decoration-style: solid; }
+
+/* ============================================================
+   الأشكال الهندسية — Geometry
+   ============================================================ */
+.geo-figure {
+  margin: 0.75rem 0;
+}
+.geo-caption {
+  font-weight: 700;
+  color: var(--platform-text);
+  margin-bottom: 0.4rem;
+  font-size: 0.95rem;
+}
+.geo-canvas {
+  background: var(--platform-surface);
+  border: 1px solid var(--platform-border);
+  border-radius: 16px;
+  padding: 0.75rem;
+  overflow: hidden;
+}
+.geo-canvas svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 70vh;
+  color: var(--platform-text);
+}
+.geo-description {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--platform-text-muted);
+}
+
+.geo-line { stroke: currentColor; fill: none; stroke-linecap: round; }
+.geo-line-emphasis { stroke: var(--accent); }
+.geo-point { fill: currentColor; }
+.geo-arc { stroke: currentColor; }
+.geo-arc-emphasis { stroke: var(--accent); }
+.geo-tick { stroke: currentColor; stroke-linecap: round; }
+.geo-parallel { stroke: currentColor; stroke-linejoin: round; }
+.geo-right-angle { stroke: currentColor; }
+.geo-circle { fill: none; stroke: currentColor; }
+.geo-radius { stroke: var(--platform-text-light); stroke-dasharray: 0.6 0.5; }
+.geo-grid-line { stroke: var(--platform-border); }
+.geo-emphasis { color: var(--accent); }
+.geo-emphasis-fill { fill: var(--accent); }
+.geo-text-math {
+  fill: currentColor;
+  font-family: var(--font-math);
+}
+.geo-text-ar {
+  fill: currentColor;
+  font-family: "Cairo", "Tajawal", system-ui, sans-serif;
+}
+.geo-label-bold { font-weight: 700; }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -93,12 +268,52 @@ body {
 .stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
 .stagger-children > *:nth-child(6) { animation-delay: 0.30s; }
 
-/* Lesson iframe */
-.lesson-frame {
-  width: 100%;
-  min-height: 100vh;
-  border: none;
-  display: block;
+/* ============================================================
+   هيكل الدرس — Lesson shell
+   الدرس ليس صفحة طويلة: خطوات متمايزة + شريط جانبي + السابق/التالي.
+   ============================================================ */
+.lesson-shell {
+  --accent: var(--algebra-primary);
+}
+.lesson-shell[data-subject="geometry"] {
+  --accent: var(--geometry-primary);
+}
+.lesson-shell[data-subject="algebra"] {
+  --accent: var(--algebra-primary);
+}
+
+/* انتقال دخول الخطوة */
+@keyframes stepIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.step-enter { animation: stepIn 0.28s ease forwards; }
+
+/* الشريط الجانبي */
+.step-rail-item {
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.step-rail-scroll {
+  scrollbar-width: thin;
+  overscroll-behavior: contain;
+}
+
+/* منطقة الخطوة: تمرير داخلي فقط، بلا تمرير للصفحة */
+.step-main {
+  overscroll-behavior: contain;
+}
+
+/* بطاقة الخطوة */
+.step-card {
+  background: var(--platform-surface);
+  border: 1px solid var(--platform-border);
+  border-radius: 20px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+/* أنشطة الكشف: المحتوى لا يُركَّب في DOM قبل ضغط الطالب */
+.reveal-panel {
+  animation: fadeIn 0.25s ease forwards;
 }
 
 /* Progress bar */
