@@ -529,6 +529,21 @@ const goodCoverage = {
     "يُكتشف viewBox غير صالح",
     checkFigureConsistency(badViewBox, "شكل").some((e) => e.includes("viewBox غير صالح")),
   );
+
+  // إحداثيات غير منتهية: كانت تمرّ سابقًا فتُرسم العلامة في موضع NaN
+  const nanPoint = structuredClone(goodFigure);
+  nanPoint.points[1] = { ...nanPoint.points[1], x: Number.NaN };
+  checkTrue(
+    "يُكتشف إحداثي NaN في نقطة",
+    checkFigureConsistency(nanPoint, "شكل").some((e) => e.includes("إحداثيات غير صالحة")),
+  );
+
+  const nanText = structuredClone(goodFigure);
+  nanText.texts = [{ x: Number.NaN, y: 2, text: "قياس", role: "ar" }];
+  checkTrue(
+    "يُكتشف إحداثي NaN في نص داخل الشكل",
+    checkFigureConsistency(nanText, "شكل").some((e) => e.includes("نصوص داخل الشكل")),
+  );
 }
 
 {

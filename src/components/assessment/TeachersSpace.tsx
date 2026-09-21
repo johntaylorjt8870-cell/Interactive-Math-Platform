@@ -52,7 +52,7 @@ export default function TeachersSpace() {
         setStatus("error");
         setMessage(
           payload?.error === "not_configured"
-            ? "مفتاح المعلم غير مُهيّأ على الخادم (TEACHER_KEY_PASSWORD)."
+            ? "فضاء المعلم غير مُهيّأ على الخادم بعد."
             : payload?.error === "unknown_lesson"
               ? "لا يوجد مفتاح مسجَّل لهذا الدرس بعد."
               : "كلمة المرور غير صحيحة.",

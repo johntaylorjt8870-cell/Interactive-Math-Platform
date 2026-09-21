@@ -304,7 +304,25 @@ export function normalizeText(value) {
 /** تماسك الشكل: كل مرجع نقطة موجود، وviewBox صالح، والشكل غير فارغ. */
 export function checkFigureConsistency(figure, label) {
   const errors = [];
-  const ids = new Set((figure.points ?? []).map((point) => point.id));
+  const points = figure.points ?? [];
+  const ids = new Set(points.map((point) => point.id));
+
+  // إحداثيات غير منتهية = شكل مشوّه يرسم في موضع لا معنى له (NaN)،
+  // لذا نرفضها هنا بدل أن تصل إلى الطالب.
+  const badPoints = points.filter(
+    (point) => !Number.isFinite(point.x) || !Number.isFinite(point.y),
+  );
+  if (badPoints.length > 0) {
+    errors.push(
+      `${label}: نقاط بإحداثيات غير صالحة: ${badPoints.map((point) => point.id || "?").join(", ")}`,
+    );
+  }
+  const badTexts = (figure.texts ?? []).filter(
+    (text) => !Number.isFinite(text.x) || !Number.isFinite(text.y),
+  );
+  if (badTexts.length > 0) {
+    errors.push(`${label}: نصوص داخل الشكل بإحداثيات غير صالحة: ${badTexts.length}`);
+  }
   const refs = [];
   (figure.segments ?? []).forEach((segment) => refs.push(segment.from, segment.to));
   (figure.angles ?? []).forEach((angle) => refs.push(angle.vertex, angle.from, angle.to));
