@@ -9,10 +9,12 @@
     "typecheck": "tsc --noEmit",
     "check:math-direction": "node scripts/check-math-direction.mjs",
     "self-test": "node scripts/self-test.mjs",
+    "test:gate": "node scripts/gate-test.mjs",
+    "test:gate:e2e": "node scripts/gate-e2e.mjs",
     "audit:lesson": "node scripts/audit-lesson.mjs",
     "audit:lessons": "node scripts/audit-lesson.mjs --all",
     "audit:fixture": "node scripts/audit-lesson.mjs --fixture",
-    "verify": "npm run lint && npm run typecheck && npm run check:math-direction && npm run self-test && npm run audit:lessons && npm run build"
+    "verify": "npm run lint && npm run typecheck && npm run check:math-direction && npm run self-test && npm run audit:lessons && npm run build && npm run test:gate"
   },
   "dependencies": {
     "dotenv": "17.3.1",
