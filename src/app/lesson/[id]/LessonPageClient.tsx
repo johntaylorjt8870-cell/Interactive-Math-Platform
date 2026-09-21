@@ -21,7 +21,6 @@ export default function LessonPageClient({
   prevLesson,
   nextLesson,
 }: LessonPageClientProps) {
-  const [frameLoaded, setFrameLoaded] = useState(false);
   const colorClass = subject.colorClass as "algebra" | "geometry";
 
   const navColors = {
@@ -84,64 +83,48 @@ export default function LessonPageClient({
         </div>
       </header>
 
-      {/* Lesson Content */}
+      {/* Lesson Content — حالة «قريبًا»
+          ملاحظة: الدروس المنفَّذة لا تصل إلى هنا؛ تُعرض عبر LessonShell
+          (نظام الخطوات التفاعلي) من صفحة الخادم مباشرة. */}
       <main className="flex-1">
-        {lesson.contentPath ? (
-          <div className="relative w-full min-h-screen">
-            {!frameLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center bg-white">
-                <div className="text-center">
-                  <div className="w-12 h-12 border-4 border-slate-200 border-t-indigo-500 rounded-full animate-spin mx-auto mb-4" aria-hidden="true" />
-                  <p className="text-slate-500 font-medium">جارٍ تحميل الدرس...</p>
-                </div>
-              </div>
-            )}
-            <iframe
-              src={lesson.contentPath}
-              title={lesson.title}
-              className="lesson-frame"
-              style={{ opacity: frameLoaded ? 1 : 0, transition: "opacity 0.3s" }}
-              onLoad={() => setFrameLoaded(true)}
-              sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-              aria-label={`محتوى الدرس: ${lesson.title}`}
-            />
+        <div className="max-w-2xl mx-auto px-4 py-20 text-center">
+          <div
+            className={`w-24 h-24 mx-auto rounded-3xl ${
+              colorClass === "algebra"
+                ? "bg-indigo-50 border-indigo-100"
+                : "bg-teal-50 border-teal-100"
+            } border-2 flex items-center justify-center mb-6 text-5xl`}
+          >
+            {lesson.icon || "📖"}
           </div>
-        ) : (
-          // Coming Soon State
-          <div className="max-w-2xl mx-auto px-4 py-20 text-center">
-            <div className={`w-24 h-24 mx-auto rounded-3xl ${colorClass === "algebra" ? "bg-indigo-50 border-indigo-100" : "bg-teal-50 border-teal-100"} border-2 flex items-center justify-center mb-6 text-5xl`}>
-              {lesson.icon || "📖"}
-            </div>
-            <h2 className="text-2xl font-black text-slate-800 mb-3">{lesson.title}</h2>
-            <p className="text-slate-600 mb-2 leading-relaxed">{lesson.description}</p>
-            <p className="text-slate-500 text-sm mb-8">
-              هذا الدرس سيكون متاحًا قريبًا. نعمل على إعداد محتوى تفاعلي عالي الجودة.
-            </p>
+          <h2 className="text-2xl font-black text-slate-800 mb-3">{lesson.title}</h2>
+          <p className="text-slate-600 mb-2 leading-relaxed">{lesson.description}</p>
+          <p className="text-slate-500 text-sm mb-8">
+            هذا الدرس سيكون متاحًا قريبًا. نعمل على إعداد محتوى تفاعلي عالي الجودة.
+          </p>
 
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-100 text-amber-700 rounded-xl text-sm font-bold border border-amber-200">
-              <span aria-hidden="true">🔒</span>
-              <span>قريبًا — {lesson.status === "coming" ? "تحت الإعداد" : "غير متاح"}</span>
-            </div>
-
-            {/* Meta Info */}
-            {(lesson.slidesCount !== undefined || lesson.exercisesCount !== undefined) && (
-              <div className="mt-8 flex items-center justify-center gap-6 text-sm text-slate-500">
-                {lesson.slidesCount !== undefined && (
-                  <span className="flex items-center gap-1.5">
-                    <span aria-hidden="true">📚</span>
-                    <span>{lesson.slidesCount} شرائح</span>
-                  </span>
-                )}
-                {lesson.exercisesCount !== undefined && (
-                  <span className="flex items-center gap-1.5">
-                    <span aria-hidden="true">📝</span>
-                    <span>{lesson.exercisesCount} تمارين</span>
-                  </span>
-                )}
-              </div>
-            )}
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-100 text-amber-700 rounded-xl text-sm font-bold border border-amber-200">
+            <span aria-hidden="true">🔒</span>
+            <span>قريبًا — {lesson.status === "coming" ? "تحت الإعداد" : "غير متاح"}</span>
           </div>
-        )}
+
+          {(lesson.slidesCount !== undefined || lesson.exercisesCount !== undefined) && (
+            <div className="mt-8 flex items-center justify-center gap-6 text-sm text-slate-500">
+              {lesson.slidesCount !== undefined && (
+                <span className="flex items-center gap-1.5">
+                  <span aria-hidden="true">📚</span>
+                  <span>{lesson.slidesCount} شرائح</span>
+                </span>
+              )}
+              {lesson.exercisesCount !== undefined && (
+                <span className="flex items-center gap-1.5">
+                  <span aria-hidden="true">📝</span>
+                  <span>{lesson.exercisesCount} تمارين</span>
+                </span>
+              )}
+            </div>
+          )}
+        </div>
       </main>
 
       {/* Bottom Navigation */}

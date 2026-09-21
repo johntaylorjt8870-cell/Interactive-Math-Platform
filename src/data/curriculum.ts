@@ -17,7 +17,9 @@ export interface Lesson {
   status: LessonStatus;
   slidesCount?: number;   // عدد الشرائح (اختياري)
   exercisesCount?: number; // عدد التمارين (اختياري)
-  contentPath?: string;   // مسار ملف HTML للدرس (إذا كان متاحًا)
+  // ملاحظة: أُزيل حقل مسار ملف HTML القديم.
+  // الدروس تُبنى مكوّنات React حقيقية عبر src/lessons/registry.ts،
+  // لأن تضمين صفحة خارجية يمنع التنقّل بين الخطوات وتتبّع التقدّم وعزل الاتجاه.
   icon?: string;          // emoji icon
   duration?: string;      // المدة التقريبية
 }

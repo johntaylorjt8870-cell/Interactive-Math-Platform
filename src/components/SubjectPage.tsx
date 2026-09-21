@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import type { Subject } from "@/data/curriculum";
 import { getSubjectStats } from "@/data/curriculum";
 import LessonCard from "@/components/LessonCard";
 import SearchBar from "@/components/SearchBar";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ProgressBar from "@/components/ProgressBar";
-import { getSubjectProgress, isLessonCompleted } from "@/lib/progress";
+import { computeSubjectProgress } from "@/lib/progress";
+import { useProgress } from "@/lib/progress-store";
 
 interface SubjectPageProps {
   subject: Subject;
@@ -16,23 +16,18 @@ interface SubjectPageProps {
 export default function SubjectPage({ subject }: SubjectPageProps) {
   const stats = getSubjectStats(subject);
   const colorClass = subject.colorClass as "algebra" | "geometry";
-  const [progress, setProgress] = useState(0);
-  const [completedMap, setCompletedMap] = useState<Record<string, boolean>>({});
 
   // Collect all lesson IDs
   const allLessonIds = subject.units.flatMap((u) => u.lessons.map((l) => l.id));
 
-  useEffect(() => {
-    const p = getSubjectProgress(allLessonIds);
-    setProgress(p);
-
-    const map: Record<string, boolean> = {};
-    allLessonIds.forEach((id) => {
-      map[id] = isLessonCompleted(id);
-    });
-    setCompletedMap(map);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // حالة التقدّم تُقرأ من مخزن localStorage عبر useSyncExternalStore،
+  // ثم تُشتقّ النسبة والخريطة أثناء العرض (بلا setState داخل effect).
+  const progressState = useProgress();
+  const progress = computeSubjectProgress(progressState, allLessonIds);
+  const completedMap: Record<string, boolean> = {};
+  allLessonIds.forEach((id) => {
+    completedMap[id] = progressState.completedLessons.includes(id);
+  });
 
   const colorStyles = {
     algebra: {

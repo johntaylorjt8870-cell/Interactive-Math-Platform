@@ -1,0 +1,45 @@
+name: CI
+
+# بوابة الجودة: تُشغَّل على كل دفعة وعلى كل طلب دمج.
+# أي فشل هنا يعني أن المحتوى أو الكود يخالف قواعد المنصة الملزمة.
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  verify:
+    name: lint · types · direction · tests · audit · build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: تثبيت الاعتماديات
+        run: npm ci
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: TypeScript
+        run: npm run typecheck
+
+      - name: قواعد الاتجاه والعزل
+        run: npm run check:math-direction
+
+      - name: الاختبارات الذاتية (محلّل · تطبيع · تصحيح · هندسة · قواعد التدقيق)
+        run: npm run self-test
+
+      - name: تدقيق تغطية الدروس
+        run: npm run audit:lessons
+
+      - name: البناء
+        run: npm run build
+        env:
+          # البناء لا يحتاج قاعدة بيانات فعلية: /api/health فقط هو من يستخدمها
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/app_db
