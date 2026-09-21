@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@300;400;500;700;800;900&display=swap');
+@import "tailwindcss";
+
+:root {
+  /* Algebra Identity - Blue/Indigo */
+  --algebra-primary: #4f46e5;
+  --algebra-secondary: #6366f1;
+  --algebra-light: #eef2ff;
+  --algebra-dark: #3730a3;
+  --algebra-accent: #818cf8;
+  --algebra-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+
+  /* Geometry Identity - Teal/Emerald */
+  --geometry-primary: #0d9488;
+  --geometry-secondary: #14b8a6;
+  --geometry-light: #f0fdfa;
+  --geometry-dark: #0f766e;
+  --geometry-accent: #5eead4;
+  --geometry-gradient: linear-gradient(135deg, #0d9488 0%, #0891b2 100%);
+
+  /* Platform Colors */
+  --platform-bg: #f8fafc;
+  --platform-surface: #ffffff;
+  --platform-border: #e2e8f0;
+  --platform-text: #1e293b;
+  --platform-text-muted: #64748b;
+  --platform-text-light: #94a3b8;
+
+  /* Status Colors */
+  --status-available: #10b981;
+  --status-coming: #f59e0b;
+  --status-completed: #6366f1;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Cairo', 'Tajawal', 'Segoe UI', system-ui, sans-serif;
+  background-color: var(--platform-bg);
+  color: var(--platform-text);
+  direction: rtl;
+  text-align: right;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Math expressions — always LTR */
+.math, .math-expr, [data-math], .fraction, .equation, .formula {
+  direction: ltr !important;
+  text-align: left !important;
+  unicode-bidi: embed;
+  display: inline-block;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-fade-in { animation: fadeIn 0.4s ease forwards; }
+.animate-slide-in { animation: slideIn 0.3s ease forwards; }
+.animate-pulse-soft { animation: pulse-soft 2s ease infinite; }
+
+/* Stagger children */
+.stagger-children > * { opacity: 0; animation: fadeIn 0.4s ease forwards; }
+.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.10s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.20s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.30s; }
+
+/* Lesson iframe */
+.lesson-frame {
+  width: 100%;
+  min-height: 100vh;
+  border: none;
+  display: block;
+}
+
+/* Progress bar */
+.progress-bar-fill {
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Card hover effect */
+.lesson-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.lesson-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -8px rgba(0,0,0,0.12);
+}
+
+/* Search highlight */
+.search-highlight {
+  background: #fef3c7;
+  border-radius: 2px;
+  padding: 0 2px;
+}
