@@ -6,6 +6,7 @@ import ActivityShell, { CheckButton, FeedbackNote } from "../lesson/ActivityShel
 import { useLessonRuntime } from "../lesson/LessonContext";
 import RichText from "../bidi/RichText";
 import MathExpr from "../math/MathExpr";
+import OptionLabel from "../lesson/OptionLabel";
 
 // ============================================================
 // تمرين قصير — Practice set
@@ -139,7 +140,7 @@ export default function PracticeSet({ activity }: { activity: ExtractActivity<"p
                       }`}
                       style={isPicked && !result ? { background: "var(--accent)" } : undefined}
                     >
-                      <MathExpr value={option} />
+                      <OptionLabel value={option} />
                     </button>
                   );
                 })}

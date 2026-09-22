@@ -30,7 +30,7 @@ import type { TeacherDataset } from "@/lib/assessment/grade";
  */
 const TEACHER_DATASETS: Record<string, () => Promise<TeacherDataset>> = {
   "algebra-u1-l1": () => import("./algebra-u1-l1").then((m) => m.default),
-  // "geometry-u1-l1": () => import("./geometry-u1-l1").then((m) => m.default),
+  "geometry-u1-l1": () => import("./geometry-u1-l1").then((m) => m.default),
 };
 
 /** هل لهذا الدرس مفتاح معلم مسجَّل؟ */

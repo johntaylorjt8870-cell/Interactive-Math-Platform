@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useLessonRuntime } from "../lesson/LessonContext";
 import RichText from "../bidi/RichText";
 import MathExpr from "../math/MathExpr";
+import OptionLabel from "../lesson/OptionLabel";
 
 // ============================================================
 // فضاء المعلم — Teacher's Space
@@ -145,7 +146,7 @@ export default function TeachersSpace() {
                     }`}
                   >
                     <span className="font-black text-slate-400">{LETTERS[optionIndex] ?? optionIndex + 1}</span>
-                    <MathExpr value={option} />
+                    <OptionLabel value={option} />
                     {optionIndex === question.answer && <span aria-hidden="true">✓</span>}
                   </li>
                 ))}

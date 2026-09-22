@@ -45,7 +45,7 @@ export interface LessonModule {
  */
 const LESSONS: Record<string, () => Promise<{ default: LessonModule | LessonContent }>> = {
   "algebra-u1-l1": () => import("./algebra-u1-l1/content"),
-  // "geometry-u1-l1": () => import("./geometry-u1-l1/content"),
+  "geometry-u1-l1": () => import("./geometry-u1-l1/content"),
 };
 
 /** هل للدرس محتوى تفاعلي منفَّذ؟ */
@@ -64,10 +64,17 @@ export async function loadLessonModule(lessonId: string): Promise<LessonModule |
   if (!loader) return null;
   const loaded = await loader();
   const raw = loaded.default;
+  // وحدة الدرس قد تأتي كـ { content, customSteps } أو كمحتوى مجرّد مع
+  // تصدير مسمّى للخطوات المخصّصة (customSteps) — الحالتان مدعومتان.
   const lessonModule: LessonModule =
     raw && typeof raw === "object" && "content" in raw
       ? (raw as LessonModule)
-      : { content: raw as LessonContent };
+      : {
+          content: raw as LessonContent,
+          customSteps:
+            (raw as unknown as Partial<LessonModule>).customSteps ??
+            ("customSteps" in loaded ? (loaded.customSteps as LessonModule["customSteps"]) : undefined),
+        };
 
   // حماية من أخطاء الربط: معرّف المحتوى يجب أن يطابق مفتاح السجل
   if (lessonModule.content.lessonId !== lessonId) {
