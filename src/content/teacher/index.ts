@@ -29,7 +29,7 @@ import type { TeacherDataset } from "@/lib/assessment/grade";
  * (المبدأ: لا نُسجّل محتوى منهجيًا وهميًا كدرس حقيقي.)
  */
 const TEACHER_DATASETS: Record<string, () => Promise<TeacherDataset>> = {
-  // "algebra-u1-l1": () => import("./algebra-u1-l1").then((m) => m.default),
+  "algebra-u1-l1": () => import("./algebra-u1-l1").then((m) => m.default),
   // "geometry-u1-l1": () => import("./geometry-u1-l1").then((m) => m.default),
 };
 

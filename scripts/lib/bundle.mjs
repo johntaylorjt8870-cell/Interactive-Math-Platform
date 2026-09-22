@@ -8,7 +8,7 @@
 // ============================================================
 
 import { createRequire } from "node:module";
-import { mkdirSync, rmSync } from "node:fs";
+import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -19,6 +19,14 @@ export const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const OUT_DIR = join(ROOT, "scripts", ".audit-build");
 
 let counter = 0;
+
+function serverOnlyShimPath() {
+  const shimDir = join(OUT_DIR, "shims");
+  mkdirSync(shimDir, { recursive: true });
+  const file = join(shimDir, "server-only.js");
+  writeFileSync(file, "export default {};\n", "utf8");
+  return file;
+}
 
 /**
  * يجمّل وحدة ويستوردها.
@@ -43,6 +51,10 @@ export async function importModule(entry, exported = []) {
     outfile,
     jsx: "automatic",
     packages: "external",
+    alias: {
+      "@": join(ROOT, "src"),
+      "server-only": serverOnlyShimPath(),
+    },
     logLevel: "silent",
   });
 
