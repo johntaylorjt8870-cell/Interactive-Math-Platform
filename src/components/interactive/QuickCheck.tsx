@@ -5,6 +5,7 @@ import type { ExtractActivity } from "@/content/types";
 import ActivityShell, { CheckButton, FeedbackNote } from "../lesson/ActivityShell";
 import RichText from "../bidi/RichText";
 import MathExpr from "../math/MathExpr";
+import OptionLabel from "../lesson/OptionLabel";
 
 // ============================================================
 // تحقّق سريع من الفهم — Quick check
@@ -89,7 +90,7 @@ export default function QuickCheck({ activity }: { activity: ExtractActivity<"qu
                       }`}
                       style={isPicked && !checked ? { background: "var(--accent)" } : undefined}
                     >
-                      <MathExpr value={option} />
+                      <OptionLabel value={option} />
                     </button>
                   );
                 })}

@@ -6,6 +6,7 @@ import { useLessonRuntime } from "../lesson/LessonContext";
 import TeachersSpace from "./TeachersSpace";
 import RichText from "../bidi/RichText";
 import MathExpr from "../math/MathExpr";
+import OptionLabel from "../lesson/OptionLabel";
 import { scoreMessage } from "@/lib/assessment/grade";
 
 // ============================================================
@@ -109,7 +110,7 @@ export default function StudentQuiz({ questions }: { questions: StudentQuestion[
                       }`}
                       style={isPicked && !result ? { background: "var(--accent)" } : undefined}
                     >
-                      <MathExpr value={option} />
+                      <OptionLabel value={option} />
                     </button>
                   );
                 })}

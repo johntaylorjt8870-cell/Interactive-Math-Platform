@@ -184,17 +184,18 @@ const geometrySubject: Subject = {
     {
       id: "geometry-unit-1",
       number: 1,
-      title: "الوحدة الأولى",
-      description: "سيتم تحديث عنوان الوحدة عند استلام الفهرس",
+      title: "الوحدة الأولى — متوازيات الأضلاع والانسحاب",
+      description: "متوازيات الأضلاع: قراءتها ومعاييرها، ثم مفهوم الانسحاب وخواصه وتطبيقاته.",
       icon: "📏",
       lessons: [
         {
           id: "geometry-u1-l1",
           number: 1,
           globalNumber: 1,
-          title: "الدرس الأول",
-          description: "سيتم تحديث هذا الوصف عند استلام الفهرس",
-          status: "coming",
+          title: "الانسحاب وخواصه",
+          description:
+            "إطلاق نشاط على متوازيات الأضلاع، ثم مفهوم الانسحاب انطلاقًا من ترصيف، فخواص الانسحاب وتمارينه (كتاب الهندسة ص 3–7).",
+          status: "available",
           icon: "📐",
         },
         {
