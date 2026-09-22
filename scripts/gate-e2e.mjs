@@ -13,6 +13,9 @@
 //   9)  كلمة المرور لا تُوضع في الكوكي ولا في أي HTML أو حزمة متصفح.
 //   10) /api/health ما زال يعمل.
 //   11) حماية المعلم مستقلة: كلمة مرور الموقع لا تفتح مفتاح المعلم.
+//   12) نظافة التخزين للنشر: الصفحات المحمية (والتحويلات قبل الدخول) لا
+//       تُخزَّن في أي وسيط مشترك (CDN/وسيط عكسي) — فلا يقدّم وسيطٌ ردًّا
+//       محميًا لزائر بلا كوكي. وتبقى أصول Next.js قابلة للتخزين.
 //
 // التشغيل (على خادم يعمل بنفس القيمة):
 //   SITE_PASSWORD=<قيمة اختبارية> npm run test:gate:e2e -- http://127.0.0.1:3000
@@ -317,6 +320,67 @@ section("المسارات المستثناة وحماية المعلم");
   // favicon/robots مستثناة من الحجب
   const response = await request("/favicon.ico");
   checkTrue("favicon غير محجوب (لا تحويل)", !REDIRECT_STATUSES.includes(response.status));
+}
+
+// ============================================================
+// 12) نظافة التخزين للنشر خارج Vercel
+// ============================================================
+// البوابة تتحقّق على الخادم قبل الرد، لكنها لا تتحكّم في ترويسات
+// التخزين. فإن كان أمام الخادم وسيط مشترك (CDN أو وسيط عكسي) يخزّن
+// HTML، صار في الإمكان تقديم صفحة محمية لزائر بلا كوكي. لذلك:
+//   • كل ردّ HTML وكل ردّ من /api/* يجب ألّا يكون قابلًا للتخزين المشترك.
+//   • أصول /_next/static تبقى قابلة للتخزين (لا نُقايض الأداء).
+// التفصيل في docs/deployment-node.md وفي next.config.ts.
+section("تخزين الاستجابات (النشر خلف CDN)");
+
+/** هل تسمح ترويسة التخزين لوسيط **مشترك** بتخزين الردّ؟ */
+function sharedCacheable(cacheControl) {
+  const value = (cacheControl ?? "").toLowerCase();
+  if (value.includes("no-store")) return false;
+  if (value.includes("private")) return false;
+  return /\bs-maxage\b/.test(value) || value.includes("public");
+}
+
+{
+  const response = await request("/", { headers: authHeaders });
+  const cacheControl = response.headers.get("cache-control");
+  checkTrue(
+    `HTML محمي غير قابل للتخزين المشترك (Cache-Control: ${cacheControl})`,
+    !sharedCacheable(cacheControl),
+  );
+}
+
+{
+  const response = await request("/lesson/algebra-u1-l1", { headers: authHeaders });
+  const cacheControl = response.headers.get("cache-control");
+  checkTrue(
+    `صفحة درس محمية غير قابلة للتخزين المشترك (Cache-Control: ${cacheControl})`,
+    !sharedCacheable(cacheControl),
+  );
+}
+
+{
+  // تحويل الزائر غير المسجَّل لا يُخزَّن كذلك — منع تسرّب صفحات الدخول المؤقتة.
+  const response = await request("/algebra");
+  const cacheControl = response.headers.get("cache-control");
+  checkTrue(
+    `تحويل الزائر غير المسجَّل غير قابل للتخزين المشترك (Cache-Control: ${cacheControl})`,
+    !sharedCacheable(cacheControl),
+  );
+}
+
+{
+  // الأصول الثابتة تبقى قابلة للتخزين: لا نُقايض الأداء.
+  const { html } = await getHtml("/gate");
+  const asset = html.match(/\/_next\/static\/[^"'\s]+?\.(?:js|css)/);
+  if (asset) {
+    const response = await request(asset[0]);
+    const cacheControl = (response.headers.get("cache-control") ?? "").toLowerCase();
+    checkTrue(
+      `أصول Next.js تبقى قابلة للتخزين (Cache-Control: ${cacheControl})`,
+      !cacheControl.includes("no-store"),
+    );
+  }
 }
 
 // ============================================================
