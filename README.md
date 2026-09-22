@@ -105,6 +105,33 @@ SITE_PASSWORD=<قيمة-اختبارية> npm run dev
 SITE_PASSWORD=<قيمة-اختبارية> npm run test:gate:e2e -- http://127.0.0.1:3000
 ```
 
+## النشر (خادم Node.js — ليس Vercel ولا GitHub Pages)
+
+المنصة تطبيق Next.js بخادم حقيقي: البوابة في `src/proxy.ts` والتصحيح ومفتاح
+المعلم في مسارات API. لذلك تحتاج **استضافة تشغّل خادم Node.js** —
+Railway · Render · Fly.io · Koyeb · Coolify · VPS خلف nginx … — ولا تصلح لها
+الاستضافة الثابتة (GitHub Pages) لأنها لا تنفّذ خادمًا.
+
+```bash
+npm ci            # البناء يحتاج devDependencies
+npm run build     # لا يحتاج أي سرّ ولا قاعدة بيانات
+npm start         # next start — يقرأ PORT ويستمع على 0.0.0.0
+```
+
+| متغيّر البيئة | إلزامي؟ | إن غاب |
+|---|---|---|
+| `SITE_PASSWORD` | **نعم في الإنتاج** | كل الصفحات المحمية **503** (لا كلمة افتراضية) |
+| `TEACHER_KEY_PASSWORD` | اختياري | `/api/teacher-key` يردّ 503 |
+| `DATABASE_URL` | لا — اختياري | `/api/health` يردّ 200 بـ `not-configured` |
+
+- **فحص الصحة**: `/api/health` (مستثنى من البوابة، لا يحتاج سرًّا).
+- **HTTPS إلزامي**: الكوكي `Secure` في الإنتاج، فلا يكتمل الدخول على `http://`.
+- القيم تُقرأ **زمن الطلب**: تغيير `SITE_PASSWORD` وتشغيل الخادم كافي بلا إعادة بناء، وهو كذلك **خروج جماعي فوري**.
+- التحقّق على الخادم المنشور: `SITE_PASSWORD=<الكلمة> npm run test:gate:e2e -- https://<النطاق>` (72 تحقّقًا).
+
+الدليل الكامل (وصفات المزوّدين، Docker، التخزين المؤقت، systemd):
+**`docs/deployment-node.md`**.
+
 ## إضافة درس
 
 انظر `LESSON_WORKFLOW.md` — العملية كاملة في سبع خطوات.
