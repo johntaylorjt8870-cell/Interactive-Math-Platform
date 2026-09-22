@@ -43,8 +43,8 @@ export interface LessonModule {
  * التحميل الكسول يعني أن كل درس يُحمَّل عند زيارته فقط،
  * فلا يتضخّم حجم الموقع مع كثرة الدروس.
  */
-const LESSONS: Record<string, () => Promise<{ default: LessonModule }>> = {
-  // "algebra-u1-l1": () => import("./algebra-u1-l1/content"),
+const LESSONS: Record<string, () => Promise<{ default: LessonModule | LessonContent }>> = {
+  "algebra-u1-l1": () => import("./algebra-u1-l1/content"),
   // "geometry-u1-l1": () => import("./geometry-u1-l1/content"),
 };
 
@@ -63,7 +63,11 @@ export async function loadLessonModule(lessonId: string): Promise<LessonModule |
   const loader = LESSONS[lessonId];
   if (!loader) return null;
   const loaded = await loader();
-  const lessonModule = loaded.default;
+  const raw = loaded.default;
+  const lessonModule: LessonModule =
+    raw && typeof raw === "object" && "content" in raw
+      ? (raw as LessonModule)
+      : { content: raw as LessonContent };
 
   // حماية من أخطاء الربط: معرّف المحتوى يجب أن يطابق مفتاح السجل
   if (lessonModule.content.lessonId !== lessonId) {

@@ -71,16 +71,16 @@ const algebraSubject: Subject = {
       id: "algebra-unit-1",
       number: 1,
       title: "الوحدة الأولى",
-      description: "سيتم تحديث عنوان الوحدة عند استلام الفهرس",
+      description: "الأعداد العادية والعمليات عليها",
       icon: "📐",
       lessons: [
         {
           id: "algebra-u1-l1",
           number: 1,
           globalNumber: 1,
-          title: "الدرس الأول",
-          description: "سيتم تحديث هذا الوصف عند استلام الفهرس",
-          status: "coming",
+          title: "الجمع والطرح",
+          description: "جمع وطرح الأعداد العادية وتوحيد المقامات وقواعد الحساب وسلاسل العمليات ومسائل تطبيقية.",
+          status: "available",
           icon: "📖",
         },
         {
